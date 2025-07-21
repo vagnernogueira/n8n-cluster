@@ -6,6 +6,12 @@ Este projeto configura um ambiente n8n robusto e escalável, em container, utili
 
 - **Runtime de Contêiner**: É necessário ter **Podman** ou **Docker** instalado e em execução no seu sistema. O `Makefile` dará preferência ao Podman, se ambos estiverem disponíveis.
 - **GNU Make**: A ferramenta `make` precisa estar instalada para utilizar os comandos de automação.
+
+```ssh
+# No Windows:
+$ scoop install main/make
+```
+
 - **Shell Compatível**: Um shell compatível (como Git Bash, WSL ou um shell padrão de Linux/macOS) é necessário para que os scripts no `Makefile` funcionem corretamente.
 
 ## Configuração
@@ -30,6 +36,7 @@ O `Makefile` automatiza as operações mais comuns. Abaixo estão os comandos di
 | `make backup-n8n` | Faz o backup exclusivo do volume de dados do n8n. |
 | `make list-volumes` | Lista todos os volumes gerenciados pelo motor de contêiner. |
 | `make start-vm` | **(Apenas Podman)** Inicia a máquina virtual do Podman. |
+| `make stop-vm` | **(Apenas Podman)** Para a máquina virtual do Podman. |
 
 ### Acesso
 
@@ -62,3 +69,12 @@ Os dados são persistidos em volumes para garantir que não sejam perdidos ao re
 
 -   **Backup**:
     Os backups são gerados como arquivos `.tar.gz` e salvos no diretório `volume-bkp/`. Utilize o comando `make backup` para garantir a segurança dos seus dados.
+
+
+## Módulos da comunidade
+
+Caso tenha problemas para instalar módulos da comunidade na tela settings do n8n, execute o comando abaixo:
+
+```ssh
+$ podman machine set --rootful
+```

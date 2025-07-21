@@ -44,7 +44,9 @@ else
 endif
 
 deploy:
-	$(COMPOSE_CMD) up -d
+	$(COMPOSE_CMD) down && $(COMPOSE_CMD) up -d
+	## Caso necessario, rebuildar os containers:
+	# $(COMPOSE_CMD) down && podman compose up -d --build
 
 undeploy:
 	$(COMPOSE_CMD) down

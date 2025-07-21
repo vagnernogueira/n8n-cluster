@@ -1,0 +1,4 @@
+.vercel
+postgres-data
+redis-data
+n8n-data

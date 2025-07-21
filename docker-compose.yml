@@ -8,7 +8,7 @@ services:
     volumes:
       - n8n-data:/home/node/.n8n
     networks:
-      - n8n-cluster
+      - common-network
     depends_on:
       - postgres
       - redis
@@ -23,7 +23,7 @@ services:
     volumes:
       - n8n-data:/home/node/.n8n
     networks:
-      - n8n-cluster
+      - common-network
     depends_on:
       - postgres
       - redis
@@ -39,7 +39,7 @@ services:
     volumes:
       - n8n-data:/home/node/.n8n
     networks:
-      - n8n-cluster
+      - common-network
     depends_on:
       - postgres
       - redis
@@ -47,7 +47,7 @@ services:
       - .env
     command: webhook
   postgres:
-    image: ankane/pgvector
+    image: ankane/pgvector:latest
     container_name: postgres-n8n
     restart: always
     volumes:
@@ -58,8 +58,13 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_USER: postgres
       POSTGRES_DB: n8n
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     networks:
-      - n8n-cluster
+      - common-network
   redis:
     image: redis:alpine
     container_name: redis-n8n
@@ -68,14 +73,47 @@ services:
       - redis-data:/data
     ports:
       - 6379:6379
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     networks:
-      - n8n-cluster
+      - common-network
+  pgadmin4:
+    image: dpage/pgadmin4:latest
+    container_name: pgadmin-n8n
+    restart: always
+    volumes:
+      - pgadmin4-data:/var/lib/pgadmin
+    ports:
+      - 15432:80
+    depends_on:
+      - postgres
+    env_file:
+      - .env
+    networks:
+      - common-network
+  redisinsight:
+    image: redis/redisinsight:latest
+    container_name: redisinsight-n8n
+    restart: always
+    volumes:
+      - redisinsight-data:/data
+    ports:
+      - 16379:5540
+    depends_on:
+      - redis
+    networks:
+      - common-network
 
 networks:
-  n8n-cluster:
+  common-network:
     driver: bridge
 
 volumes:
   postgres-data:
   redis-data:
   n8n-data:
+  redisinsight-data:
+  pgadmin4-data:

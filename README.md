@@ -31,6 +31,12 @@ O `Makefile` automatiza as operações mais comuns. Abaixo estão os comandos di
 | `make list-volumes` | Lista todos os volumes gerenciados pelo motor de contêiner. |
 | `make start-vm` | **(Apenas Podman)** Inicia a máquina virtual do Podman. |
 
+### Acesso
+
+-   Acesse `http://localhost:5676/` no seu navegador para visualizar e configurar o n8n.
+-   Acesse `http://localhost:15432/` no seu navegador para visualizar o pgAdmin. Veja o arquivo .env para configurar o acesso.
+-   Acesse `http://localhost:16379/` no seu navegador para visualizar o Redis Insight.
+
 ## Arquitetura de Serviços
 
 Este projeto utiliza `docker-compose.yml` para orquestrar os seguintes serviços:
@@ -38,17 +44,21 @@ Este projeto utiliza `docker-compose.yml` para orquestrar os seguintes serviços
 -   `n8n-editor`: A interface principal do n8n para criação e edição de workflows.
 -   `n8n-workers`: Instâncias de workers para processar as execuções dos workflows de forma escalável.
 -   `n8n-webhooks`: Instâncias dedicadas para lidar com requisições de webhooks.
--   `postgres-n8n`: Banco de dados PostgreSQL para persistência dos dados dos workflows. A versão utilizada ankane/pgvector possibilita armazenamento de dados vetorias, isto é util para utilizar em projetos de IA com RAG.
--   `redis-n8n`: Servidor Redis utilizado para gerenciamento de fila e cache.
+-   `postgres`: Banco de dados PostgreSQL para persistência dos dados dos workflows. A versão utilizada ankane/pgvector possibilita armazenamento de dados vetorias, isto é util para utilizar em projetos de IA com RAG.
+-   `redis`: Servidor Redis utilizado para gerenciamento de fila e cache.
+-   `pgadmin4`: Interface web para administração do PostgreSQL.
+-   `redisinsight`: Interface web para visualização e gerenciamento de dados no Redis.
 
 ## Persistência e Backup
 
 Os dados são persistidos em volumes para garantir que não sejam perdidos ao reiniciar os contêineres.
 
 -   **Volumes**:
-    -   `n8n-cluster_n8n-data`: Armazena as configurações e workflows do n8n.
-    -   `n8n-cluster_postgres-data`: Armazena os dados do PostgreSQL.
-    -   `n8n-cluster_redis-data`: Armazena os dados do Redis.
+    -   `n8n-data`: Armazena as configurações e workflows do n8n.
+    -   `postgres-data`: Armazena os dados do PostgreSQL.
+    -   `redis-data`: Armazena os dados do Redis.
+    -   `pgadmin4-data`: Armazena as configurações do pgAdmin.
+    -   `redisinsight-data`: Armazena as configurações do Redis Insight.
 
 -   **Backup**:
     Os backups são gerados como arquivos `.tar.gz` e salvos no diretório `volume-bkp/`. Utilize o comando `make backup` para garantir a segurança dos seus dados.

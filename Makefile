@@ -51,22 +51,26 @@ undeploy:
 backup: backup-redis backup-postgres backup-n8n
 
 backup-redis:
-	@echo "Fazendo backup do volume do Redis..."
+	@echo "Fazendo backup dos volumes do Redis e Redis Insight..."
 ifeq ($(CONTAINER_CMD),podman)
 	@$(CONTAINER_CMD) machine ssh $(PODMAN_MACHINE_NAME) -- $(CONTAINER_CMD) volume export $(PROJECT_NAME)_redis-data | gzip > "$(CURDIR)/volume-bkp/$(PROJECT_NAME)_redis-data.tar.gz"
+	@$(CONTAINER_CMD) machine ssh $(PODMAN_MACHINE_NAME) -- $(CONTAINER_CMD) volume export $(PROJECT_NAME)_redisinsight-data | gzip > "$(CURDIR)/volume-bkp/$(PROJECT_NAME)_redisinsight-data.tar.gz"
 else
 	@$(CONTAINER_CMD) run --rm -v $(PROJECT_NAME)_redis-data:/data -v "$(CURDIR)/volume-bkp":/backup busybox tar czf /backup/$(PROJECT_NAME)_redis-data.tar.gz -C /data .
+	@$(CONTAINER_CMD) run --rm -v $(PROJECT_NAME)_redisinsight-data:/data -v "$(CURDIR)/volume-bkp":/backup busybox tar czf /backup/$(PROJECT_NAME)_redisinsight-data.tar.gz -C /data .
 endif
-	@echo "Backup do Redis concluído."
+	@echo "Backup do Redis e Redis Insight concluído."
 
 backup-postgres:
-	@echo "Fazendo backup do volume do PostgreSQL..."
+	@echo "Fazendo backup do volume do PostgreSQL e pgadmin4..."
 ifeq ($(CONTAINER_CMD),podman)
 	@$(CONTAINER_CMD) machine ssh $(PODMAN_MACHINE_NAME) -- $(CONTAINER_CMD) volume export $(PROJECT_NAME)_postgres-data | gzip > "$(CURDIR)/volume-bkp/$(PROJECT_NAME)_postgres-data.tar.gz"
+	@$(CONTAINER_CMD) machine ssh $(PODMAN_MACHINE_NAME) -- $(CONTAINER_CMD) volume export $(PROJECT_NAME)_pgadmin4-data | gzip > "$(CURDIR)/volume-bkp/$(PROJECT_NAME)_pgadmin4-data.tar.gz"
 else
 	@$(CONTAINER_CMD) run --rm -v $(PROJECT_NAME)_postgres-data:/data -v "$(CURDIR)/volume-bkp":/backup busybox tar czf /backup/$(PROJECT_NAME)_postgres-data.tar.gz -C /data .
+	@$(CONTAINER_CMD) run --rm -v $(PROJECT_NAME)_pgadmin4-data:/data -v "$(CURDIR)/volume-bkp":/backup busybox tar czf /backup/$(PROJECT_NAME)_pgadmin4-data.tar.gz -C /data .
 endif
-	@echo "Backup do PostgreSQL concluído."
+	@echo "Backup do PostgreSQL e pgadmin4 concluído."
 
 backup-n8n:
 	@echo "Fazendo backup do volume do n8n..."
